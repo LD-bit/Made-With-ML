@@ -4,7 +4,7 @@ channels:
   - pytorch
   - pip
 dependencies:
-  - python
+  - python=3.10.12
   - jupyter
   - matplotlib
   - nltk
@@ -17,8 +17,10 @@ dependencies:
   - tqdm
   - urllib3
   - opencv
+  - gensim
+  - pytorch
+  - numpy
+  - pip
   - pip:
-    - gensim
-    - sklearn
-    - torch
-    - numpy
+       - sklearn
+       - torch
