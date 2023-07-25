@@ -2,21 +2,23 @@ name: MadeWML
 channels: 
   - conda-forge
   - pytorch
+  - pip
 dependencies:
   - python
-  - gensim
   - jupyter
   - matplotlib
   - nltk
-  - numpy
   - pandas
   - requests
   - scikit-learn
   - scipy
   - seaborn
   - six
-  - sklearn
-  - torch
   - tqdm
   - urllib3
   - opencv
+  - pip:
+    - gensim
+    - sklearn
+    - torch
+    - numpy
