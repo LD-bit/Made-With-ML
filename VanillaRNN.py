@@ -48,10 +48,28 @@ print(f"train: {len(ts_train)} ({len(ts_train)/len(ts):.2f})\n"
       f"val: {len(ts_val)} ({len(ts_val)/len(ts):.2f})\n"
       f"test: {len(ts_test)} ({len(ts_test)/len(ts):.2f})")
 # Note that for the moment there are no labels, only dates and data
-WINDOW_SIZE = 1
+WINDOW_SIZE = 20
 #%% ---------------------------------------------------------------------------
 #                               FUNCTION ZONE
 # -----------------------------------------------------------------------------
+def padding(the_list):
+    l = len(the_list)
+    s = the_list[0].shape
+    for i in range(l):
+        # empty case
+        if the_list[i].size == 0:
+            the_list[i] = np.zeros(s)
+        # array not complete
+        else:
+            while the_list[i].shape < s:
+            
+            np.pad(the_list[i],
+                   (s[0] - the_list[i].size,),
+                   mode = 'constant',
+                   constant_values=0)
+                
+    return the_list
+
 def create_pred_dataset(timeseries, lookback_window):
     """ Transform a time series into a prediction dataset
     For the moment, the dataset contains only X and we are missing out labels
@@ -62,7 +80,26 @@ def create_pred_dataset(timeseries, lookback_window):
     for i in range(len(timeseries) + lookback_window):
         feature.append(timeseries[i:i+lookback_window])
         label.append(timeseries[i+lookback_window:i+lookback_window+1])
-    return feature, label
+    padding(feature)
+    padding(label)
+    return feature,label#torch.tensor(feature), torch.tensor(label)
+
+### MODEL ###
+class VanilleaRNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.rnn =nn.RNN(input_size = 1, 
+                         hidden_size = 50,
+                         num_layers = 1,
+                         nonlinaerity = 'tanh',
+                         dropout = 0,
+                         bidirectional = False)
+        
+    def forward(self,x):
+        x, _ = self.rnn(x)
+        
+        
+        
 #%% ---------------------------------------------------------------------------
 #                               MAIN ZONE
 # -----------------------------------------------------------------------------
@@ -72,3 +109,8 @@ X_val, y_val = create_pred_dataset(timeseries = ts_val,
                                   lookback_window = WINDOW_SIZE)
 X_test, y_test = create_pred_dataset(timeseries = ts_test, 
                                      lookback_window = WINDOW_SIZE)
+
+torch.manual_seed(64)
+model = VanilleaRNN()
+criterion = torch.nn.MSELoss()
+optimizer = torch.optim.SGD(model.parameters())
