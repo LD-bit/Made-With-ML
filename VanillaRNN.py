@@ -63,7 +63,7 @@ def padding(the_list):
         else:
             while the_list[i].shape < s:
             
-            np.pad(the_list[i],
+                np.pad(the_list[i],
                    (s[0] - the_list[i].size,),
                    mode = 'constant',
                    constant_values=0)
@@ -85,13 +85,13 @@ def create_pred_dataset(timeseries, lookback_window):
     return feature,label#torch.tensor(feature), torch.tensor(label)
 
 ### MODEL ###
-class VanilleaRNN(nn.Module):
+class VanillaRNN(nn.Module):
     def __init__(self):
         super().__init__()
-        self.rnn =nn.RNN(input_size = 1, 
+        self.rnn = nn.RNN(input_size = 1, 
                          hidden_size = 50,
                          num_layers = 1,
-                         nonlinaerity = 'tanh',
+                         nonlinearity = 'tanh',
                          dropout = 0,
                          bidirectional = False)
         
@@ -111,6 +111,6 @@ X_test, y_test = create_pred_dataset(timeseries = ts_test,
                                      lookback_window = WINDOW_SIZE)
 
 torch.manual_seed(64)
-model = VanilleaRNN()
+model = VanillaRNN()
 criterion = torch.nn.MSELoss()
 optimizer = torch.optim.SGD(model.parameters())
